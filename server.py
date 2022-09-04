@@ -1,6 +1,6 @@
 from flask import Flask, request, render_template
 from models import Model
-from facecv import run
+#from facecv import run
 import os
 
 #run()
