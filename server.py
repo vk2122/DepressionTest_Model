@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, flash, redirect, session, abort, jsonify
+from flask import Flask, request, render_template
 from models import Model
-from depression_detection_tweets import DepressionDetection
-from TweetModel import process_message
+from facecv import run
 import os
+
+#run()
 
 app = Flask(__name__)
 
@@ -10,21 +11,6 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     return render_template("index.html")
-
-
-@app.route("/sentiment")
-def sentiment():
-    return render_template("sentiment.html")
-
-
-@app.route("/predictSentiment", methods=["POST"])
-def predictSentiment():
-    message = request.form['form10']
-    pm = process_message(message)
-    result = DepressionDetection.classify(
-        pm, 'bow') or DepressionDetection.classify(pm, 'tf-idf')
-    return render_template("tweetresult.html", result=result)
-
 
 @app.route('/predict', methods=["POST"])
 def predict():
@@ -44,16 +30,16 @@ def predict():
     classifier = model.svm_classifier()
     prediction = classifier.predict([values])
     if prediction[0] == 0:
-        result = 'Your Depression test result : No Depression'
+        result1 = 'Your Test result : No Depression'
     if prediction[0] == 1:
-        result = 'Your Depression test result : Mild Depression'
+        result1 = 'Your Test result : Mild Depression'
     if prediction[0] == 2:
-        result = 'Your Depression test result : Moderate Depression'
+        result1 = 'Your Test result : Moderate Depression'
     if prediction[0] == 3:
-        result = 'Your Depression test result : Moderately severe Depression'
+        result1 = 'Your Test result : Moderately severe Depression'
     if prediction[0] == 4:
-        result = 'Your Depression test result : Severe Depression'
-    return render_template("result.html", result=result)
+        result1 = 'Your Test result : Severe Depression'
+    return render_template("result.html", result=result1)
 
 
 app.secret_key = os.urandom(12)
